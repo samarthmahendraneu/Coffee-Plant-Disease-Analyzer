@@ -166,7 +166,7 @@ export const Hero: React.FC<HeroProps> = ({ onImageSelect, onOpenMap }) => {
       
       <footer className="bg-white py-8 border-t border-stone-200 mt-auto">
         <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-stone-500">
-            <p>© 2024 CoffeeAI. Designed for Chikmagalur Coffee Growers.</p>
+            <p>© 2025 CoffeeAI. Designed for Chikmagalur Coffee Growers by Samarth Mahendra.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
                 <span className="hover:text-stone-800 cursor-pointer">Privacy</span>
                 <span className="hover:text-stone-800 cursor-pointer">Terms</span>
