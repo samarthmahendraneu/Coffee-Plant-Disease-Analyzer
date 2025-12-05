@@ -24,6 +24,20 @@ export interface AnalysisResult {
   preventativeMeasures: string[];
   riskFactors: RiskFactors;
   weeklyPlan: DailyPlan[];
+  healthScore: number; // Calculated 0-100 score
+}
+
+export interface GeoLocation {
+  lat: number;
+  lng: number;
+  regionName?: string; // e.g., "Mudigere, Chikmagalur"
+}
+
+export interface HistoryRecord extends AnalysisResult {
+  id: string;
+  timestamp: number;
+  location: GeoLocation;
+  thumbnail: string; // Small base64 string for map preview
 }
 
 export interface AnalysisState {
@@ -31,4 +45,5 @@ export interface AnalysisState {
   result: AnalysisResult | null;
   error: string | null;
   imagePreview: string | null;
+  currentLocation?: GeoLocation;
 }

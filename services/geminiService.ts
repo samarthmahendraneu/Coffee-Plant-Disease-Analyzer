@@ -78,6 +78,32 @@ const analysisSchema: Schema = {
   ]
 };
 
+// Rubric for Health Score Calculation
+const calculateHealthScore = (result: Omit<AnalysisResult, 'healthScore'>): number => {
+  let score = 100;
+
+  // 1. Severity Deduction
+  switch (result.severity) {
+    case 'Critical': score -= 70; break;
+    case 'Moderate': score -= 40; break;
+    case 'Low': score -= 15; break;
+    case 'Healthy': score -= 0; break;
+  }
+
+  // 2. Risk Factor Deduction (Weighted)
+  const riskDeduction = (
+    (result.riskFactors.diseaseRisk * 0.1) +
+    (result.riskFactors.pestRisk * 0.15) + // Pests are high risk in Chikmagalur
+    (result.riskFactors.nutrientDeficiency * 0.05) +
+    (result.riskFactors.environmentalStress * 0.05)
+  );
+
+  score -= riskDeduction;
+
+  // 3. Normalize
+  return Math.max(0, Math.min(100, Math.round(score)));
+};
+
 export const analyzePlantImage = async (base64Image: string): Promise<AnalysisResult> => {
   try {
     const cleanBase64 = base64Image.split(',')[1] || base64Image;
@@ -127,7 +153,10 @@ export const analyzePlantImage = async (base64Image: string): Promise<AnalysisRe
     const text = response.text;
     if (!text) throw new Error("No response from Gemini");
 
-    return JSON.parse(text) as AnalysisResult;
+    const rawResult = JSON.parse(text);
+    const healthScore = calculateHealthScore(rawResult);
+
+    return { ...rawResult, healthScore };
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
     throw error;
