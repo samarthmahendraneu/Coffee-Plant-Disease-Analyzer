@@ -154,7 +154,8 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({ result, imagePreview
         {/* Middle Section: Long Term & Stats */}
         <div className="grid md:grid-cols-2 gap-6 md:gap-8">
             {/* Preventative Measures */}
-            <div className="bg-white rounded-3xl shadow-sm border border-stone-200 p-8 min-w-0">
+            <div className="bg-white rounded-3xl shadow-sm border border-stone-200 p-8 min-w-0 min-h-0">
+
                 <h3 className="flex items-center text-stone-900 font-bold mb-6">
                     <BookOpen className="w-5 h-5 mr-2 text-purple-600" />
                     Long-Term Prevention
@@ -173,7 +174,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({ result, imagePreview
             </div>
 
             {/* Risk Factors Chart */}
-            <div className="bg-white rounded-3xl shadow-sm border border-stone-200 p-8 min-w-0">
+            <div className="bg-white rounded-3xl shadow-sm border border-stone-200 p-8 min-w-0 min-h-0">
                 <h3 className="flex items-center text-stone-900 font-bold mb-2">
                     <Activity className="w-5 h-5 mr-2 text-stone-600" />
                     Risk Assessment
@@ -181,7 +182,8 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({ result, imagePreview
                 <p className="text-stone-500 text-sm mb-6">Current vulnerability levels based on visual signs.</p>
                 
                 {/* Fixed height container using inline styles to ensure Recharts has dimensions */}
-                <div style={{ width: '100%', height: 250 }}>
+                <div style={{ width: '100%', height: 250 }} className="min-w-0 min-h-0">
+
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={riskData} layout="vertical" margin={{ left: 0, right: 30, bottom: 0, top: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f5f5f4" />

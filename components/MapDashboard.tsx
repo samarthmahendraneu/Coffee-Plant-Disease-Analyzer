@@ -77,9 +77,9 @@ export const MapDashboard: React.FC<MapDashboardProps> = ({ history, onBack, onA
   const centerLng = filteredHistory.length > 0 ? filteredHistory[0].location.lng : 75.7754;
 
   return (
-    <div className="flex flex-col h-screen bg-stone-100">
+    <div className="flex flex-col h-screen bg-stone-900">
       {/* Header */}
-      <div className="bg-white p-4 border-b border-stone-200 shadow-sm z-30 flex items-center justify-between">
+      <div className="bg-white/95 backdrop-blur-md p-4 border-b border-stone-200 shadow-sm z-30 flex items-center justify-between absolute top-0 left-0 right-0">
         <button 
           onClick={onBack}
           className="flex items-center text-stone-600 hover:text-stone-900 font-semibold transition-colors"
@@ -94,7 +94,7 @@ export const MapDashboard: React.FC<MapDashboardProps> = ({ history, onBack, onA
       </div>
 
       {/* Map Area */}
-      <div className="flex-grow relative">
+      <div className="flex-grow relative mt-[60px]">
         <MapContainer 
           center={[centerLat, centerLng]} 
           zoom={13} 
@@ -102,23 +102,18 @@ export const MapDashboard: React.FC<MapDashboardProps> = ({ history, onBack, onA
         >
           <MapRecenter lat={centerLat} lng={centerLng} />
           
+          {/* 1. Base Layer: Satellite Imagery */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          />
+
+          {/* 2. Overlay Layer: Labels (Hybrid View) */}
+          <TileLayer
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
           />
 
           {/* Grid Overlay (Heatmap) */}
-          {gridData.map((grid, idx) => (
-            <Rectangle
-              key={`grid-${idx}`}
-              bounds={grid.bounds}
-              pathOptions={{ 
-                color: getHealthColor(grid.avgScore), 
-                weight: 0, 
-                fillOpacity: 0.3 
-              }}
-            />
-          ))}
 
           {/* Individual Points */}
           {filteredHistory.map((record) => (
@@ -162,7 +157,7 @@ export const MapDashboard: React.FC<MapDashboardProps> = ({ history, onBack, onA
 
         {/* Empty State Overlay */}
         {history.length === 0 && (
-          <div className="absolute inset-0 z-[500] flex items-center justify-center bg-stone-100/80 backdrop-blur-sm p-4">
+          <div className="absolute inset-0 z-[500] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
              <div className="text-center p-8 bg-white rounded-3xl shadow-xl border border-stone-200 max-w-sm w-full animate-in zoom-in-95 duration-300">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Sprout className="w-8 h-8 text-green-600" />
