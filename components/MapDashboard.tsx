@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup, Rectangle, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
 import { HistoryRecord } from '../types';
 import { ArrowLeft, Calendar, Bug, Droplets, Sprout, Camera } from 'lucide-react';
 
@@ -18,6 +18,18 @@ const MapRecenter = ({ lat, lng }: { lat: number, lng: number }) => {
   return null;
 };
 
+// Component to handle map resizing issues on mount
+const MapResizeHandler = () => {
+  const map = useMap();
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+        map.invalidateSize();
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [map]);
+  return null;
+};
+
 export const MapDashboard: React.FC<MapDashboardProps> = ({ history, onBack, onAnalyze }) => {
   // Timeline state (days ago)
   const [daysFilter, setDaysFilter] = useState<number>(30);
@@ -27,43 +39,6 @@ export const MapDashboard: React.FC<MapDashboardProps> = ({ history, onBack, onA
     const cutoff = Date.now() - (daysFilter * 24 * 60 * 60 * 1000);
     return history.filter(record => record.timestamp >= cutoff);
   }, [history, daysFilter]);
-
-  // Calculate Region Grids (Unit Squares)
-  // We round Lat/Lng to approx 0.01 degrees (~1.1km) to group points
-  const gridData = useMemo(() => {
-    const grids: Record<string, { 
-      totalScore: number; 
-      count: number; 
-      bounds: [[number, number], [number, number]] 
-    }> = {};
-
-    const gridSize = 0.01; // ~1km
-
-    filteredHistory.forEach(record => {
-      // Create a grid key
-      const latKey = Math.floor(record.location.lat / gridSize);
-      const lngKey = Math.floor(record.location.lng / gridSize);
-      const key = `${latKey}-${lngKey}`;
-
-      if (!grids[key]) {
-        grids[key] = {
-          totalScore: 0,
-          count: 0,
-          bounds: [
-            [latKey * gridSize, lngKey * gridSize],
-            [(latKey + 1) * gridSize, (lngKey + 1) * gridSize]
-          ]
-        };
-      }
-      grids[key].totalScore += record.healthScore;
-      grids[key].count += 1;
-    });
-
-    return Object.values(grids).map(g => ({
-      avgScore: g.totalScore / g.count,
-      bounds: g.bounds
-    }));
-  }, [filteredHistory]);
 
   const getHealthColor = (score: number) => {
     if (score >= 80) return '#22c55e'; // Green
@@ -101,6 +76,7 @@ export const MapDashboard: React.FC<MapDashboardProps> = ({ history, onBack, onA
           style={{ height: '100%', width: '100%' }}
         >
           <MapRecenter lat={centerLat} lng={centerLng} />
+          <MapResizeHandler />
           
           {/* 1. Base Layer: Satellite Imagery */}
           <TileLayer
@@ -112,8 +88,6 @@ export const MapDashboard: React.FC<MapDashboardProps> = ({ history, onBack, onA
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
           />
-
-          {/* Grid Overlay (Heatmap) */}
 
           {/* Individual Points */}
           {filteredHistory.map((record) => (

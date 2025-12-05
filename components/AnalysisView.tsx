@@ -184,7 +184,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({ result, imagePreview
                 {/* Fixed height container using inline styles to ensure Recharts has dimensions */}
                 <div style={{ width: '100%', height: 250 }} className="min-w-0 min-h-0">
 
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <BarChart data={riskData} layout="vertical" margin={{ left: 0, right: 30, bottom: 0, top: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f5f5f4" />
                             <XAxis type="number" domain={[0, 100]} hide />
